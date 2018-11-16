@@ -27,18 +27,23 @@ namespace IsBroOffApi.Controllers
         {
             DateTime.TryParse($"{yyyy}-{mm}-{dd}", out var date);
 
-            if (date == DateTime.MinValue)
-                return BadRequest();
-
-            var isBroOff = _scheduleService.IsBroOff(date);
-
-            return new WorkStatusDto
+            try
             {
-                Date = date,
-                DateAsString = date.ToLongDateString(),
-                IsBroOff = isBroOff,
-                StatusText = isBroOff ? "Bro is off" : "Bro has work"
-            };
+                var isBroOff = _scheduleService.IsBroOff(date);
+                return new WorkStatusDto
+                {
+                    Date = date,
+                    DateAsString = date.ToLongDateString(),
+                    IsBroOff = isBroOff,
+                    StatusText = isBroOff ? "Bro is off" : "Bro has work"
+                };
+            }
+            catch (Exception exception)
+            {
+                // TODO: Log exception
+                ModelState.AddModelError("Exception", exception.Message);
+                return BadRequest(ModelState);
+            }
         }
     }
 }

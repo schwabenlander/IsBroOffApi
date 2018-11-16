@@ -9,8 +9,8 @@ namespace IsBroOffApi.Services
 {
     public class ScheduleService : IScheduleService
     {
+        public DateTime FirstDayOffDate { get; }
         private readonly IConfiguration _configuration;
-        private DateTime FirstDayOffDate { get; }
         private int DaysInCycle { get; }
         private int DaysOnDuty { get; }
 
@@ -25,7 +25,8 @@ namespace IsBroOffApi.Services
         public bool IsBroOff(DateTime date)
         {
             if (date < FirstDayOffDate)
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(
+                    $"Date to check must be after: {FirstDayOffDate.ToShortDateString()}");
 
             var daysSinceKnownFirstDayOff = (date.Date - FirstDayOffDate.Date).Days;
             var carrier = daysSinceKnownFirstDayOff % DaysInCycle;
