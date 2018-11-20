@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IsBroOffApi.Models;
 using IsBroOffApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace IsBroOffApi.Controllers
 {
@@ -13,10 +14,13 @@ namespace IsBroOffApi.Controllers
     public class CalendarController : ControllerBase
     {
         private readonly IScheduleService _scheduleService;
+        private readonly ILogger _logger;
 
-        public CalendarController(IScheduleService scheduleService)
+        public CalendarController(IScheduleService scheduleService, 
+                                  ILogger<CalendarController> logger)
         {
             _scheduleService = scheduleService;
+            _logger = logger;
         }
 
         // GET api/calendar/2018/11/13
@@ -30,6 +34,9 @@ namespace IsBroOffApi.Controllers
             try
             {
                 var isBroOff = _scheduleService.IsBroOff(date);
+
+                _logger.LogInformation($"Getting work status for: {date.ToShortDateString()}");
+
                 return new WorkStatusDto
                 {
                     Date = date,
@@ -40,7 +47,9 @@ namespace IsBroOffApi.Controllers
             }
             catch (Exception exception)
             {
-                // TODO: Log exception
+                _logger.LogError(exception, 
+                    "Exception occurred during attempt to get work status.", 
+                    date);
                 ModelState.AddModelError("Exception", exception.Message);
                 return BadRequest(ModelState);
             }

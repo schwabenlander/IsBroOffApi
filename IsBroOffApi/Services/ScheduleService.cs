@@ -25,8 +25,8 @@ namespace IsBroOffApi.Services
         public bool IsBroOff(DateTime date)
         {
             if (date < FirstDayOffDate)
-                throw new ArgumentOutOfRangeException(
-                    $"Date to check must be after: {FirstDayOffDate.ToShortDateString()}");
+                throw new ArgumentOutOfRangeException(nameof(date), 
+                    $"Invalid date. Date to check must be after: {FirstDayOffDate.ToShortDateString()}");
 
             var daysSinceKnownFirstDayOff = (date.Date - FirstDayOffDate.Date).Days;
             var carrier = daysSinceKnownFirstDayOff % DaysInCycle;
