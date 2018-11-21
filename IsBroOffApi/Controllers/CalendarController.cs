@@ -45,7 +45,7 @@ namespace IsBroOffApi.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, 
+                _logger.LogCritical(exception, 
                     "Exception occurred during attempt to get work status.", 
                     date);
                 ModelState.AddModelError("Exception", exception.Message);
