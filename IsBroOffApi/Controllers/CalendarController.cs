@@ -40,9 +40,7 @@ namespace IsBroOffApi.Controllers
                 return new WorkStatusDto
                 {
                     Date = date,
-                    DateAsString = date.ToLongDateString(),
-                    IsBroOff = isBroOff,
-                    StatusText = isBroOff ? "Bro is off" : "Bro has work"
+                    IsBroOff = isBroOff
                 };
             }
             catch (Exception exception)
@@ -53,6 +51,23 @@ namespace IsBroOffApi.Controllers
                 ModelState.AddModelError("Exception", exception.Message);
                 return BadRequest(ModelState);
             }
+        }
+
+        // GET api/calendar/today
+        [HttpGet("today")]
+        [ProducesResponseType(200)]
+        public ActionResult<WorkStatusDto> GetWorkStatusForToday()
+        {
+            var today = DateTime.Today;
+            var isBroOff = _scheduleService.IsBroOff(today);
+
+            _logger.LogInformation($"Getting work status today ({today.ToShortDateString()})");
+
+            return new WorkStatusDto
+            {
+                Date = today,
+                IsBroOff = isBroOff
+            };
         }
     }
 }
